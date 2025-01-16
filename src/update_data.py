@@ -63,12 +63,11 @@ def save_btc_datas(ticker, start_date):
 
 # To retrieve the data
 def load_btc_datas():
-    df = pd.read_csv("../data/BTC-USD.csv", parse_dates=['date'])
-    print("Data loaded from btc_data.csv")
+    df = pd.read_csv("data/BTC-USD.csv", parse_dates=['date'])
     return df
 
 def load_crypto_datas(ticker):
-    df = pd.read_csv(f"../data/{ticker}.csv", parse_dates=['date'])
+    df = pd.read_csv(f"data/{ticker}.csv", parse_dates=['date'])
     return df
 
   

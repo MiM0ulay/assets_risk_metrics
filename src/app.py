@@ -3,12 +3,6 @@ import pandas as pd
 
 from calculate_risk_metric import calculate_btc_risk_metric, calculate_risk_metric
 
-# Title of the app
-st.title("Cryptocurrency Risk Metrics")
-
-# Create sample data
-
-
 cryptos = { 'ETH-USD':   '2016-01-01',
 'OM-USD' : '2020-09-01',
 'SOL-USD':   '2020-01-01',
@@ -29,27 +23,39 @@ cryptos = { 'ETH-USD':   '2016-01-01',
 
 }
 
+def main():
+    st.title("Cryptocurrency Risk Metrics")
 
-all_results = []
-btc_res = calculate_btc_risk_metric()
-all_results.extend(btc_res)
-
-
-for ticker, start_date in cryptos.items():
-    alt_res = calculate_risk_metric(ticker, start_date)
-    all_results.extend(alt_res)
+    all_results = []
+    btc_res = calculate_btc_risk_metric()
+    all_results.extend(btc_res)
 
 
-# Create a pandas DataFrame
-df_results = pd.DataFrame(all_results, columns=['ticker', 'date', 'value', 'MA', 'avg'])
-df_results['Risk to MA'] = ((df_results['MA'].astype(float) - df_results['value'].astype(float)) / df_results['value'].astype(float)) * 100
-
-# Round the 'value', 'MA', 'avg', and 'Risk to MA' columns to 2 decimal places
-for col in ['avg', 'Risk to MA']:
-    df_results[col] = df_results[col].round(2)
-    df_results = df_results.sort_values(by=['avg', 'Risk to MA'])
+    for ticker, start_date in cryptos.items():
+        alt_res = calculate_risk_metric(ticker, start_date)
+        all_results.extend(alt_res)
 
 
-# Display the table
-st.write("Risk Metrics for Cryptocurrencies")
-st.table(df_results)
+    # Create a pandas DataFrame
+    df_results = pd.DataFrame(all_results, columns=['ticker', 'date', 'value', 'MA', 'avg'])
+    df_results['Risk to MA'] = ((df_results['MA'].astype(float) - df_results['value'].astype(float)) / df_results['value'].astype(float)) * 100
+
+    # Round the 'value', 'MA', 'avg', and 'Risk to MA' columns to 2 decimal places
+    for col in ['avg', 'Risk to MA']:
+        df_results[col] = df_results[col].round(2)
+        df_results = df_results.sort_values(by=['avg', 'Risk to MA'])
+
+
+    # Display the table
+    st.write("Risk Metrics for Cryptocurrencies")
+    st.table(df_results)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
