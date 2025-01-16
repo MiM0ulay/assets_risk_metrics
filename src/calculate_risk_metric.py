@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import nasdaqdatalink
 import yfinance as yf
 from update_data import load_btc_datas
+from update_data import load_crypto_datas
 from tabulate import tabulate
 
 def calculate_btc_risk_metric():
@@ -38,30 +39,25 @@ def calculate_btc_risk_metric():
 
 def calculate_risk_metric(ticker, start_date):
   # Download data
-  df = yf.download(tickers=ticker, start=start_date, interval='1d', progress=False)
+  old_data = load_crypto_datas(ticker)
+  last_date = old_data['date'].iloc[-1] 
+  formatted_date = last_date.strftime("%Y-%m-%d")
 
-  # Debugging: Check the column names
-
-  # Reset the index and flatten column names (if needed)
+  df = yf.download(tickers=ticker, start=formatted_date, interval='1d', progress=False)
   df.reset_index(inplace=True)
-
-  # Handle multi-level columns (flatten them if they exist)
   df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
-
-  # Debugging: Check flattened column names
-
-  # Rename columns for consistency
   if 'Open' in df.columns:
       df.rename(columns={'Date': 'date', 'Open': 'value'}, inplace=True)
   elif 'value' not in df.columns:
       raise KeyError("The required columns ('date', 'value') are not found in the DataFrame.")
 
-  # Keep necessary columns
   df = df[['date', 'value']].copy()
-
-  # Sort by date
   df.sort_values(by='date', inplace=True)
 
+  df = pd.concat([old_data, df], ignore_index=True)
+  df.drop_duplicates(subset='date', keep='first', inplace=True)
+  df.sort_values(by='date', inplace=True) 
+  
   # Calculate moving average
   moving_average_days = 365
   df['MA'] = df['value'].rolling(moving_average_days, min_periods=1).mean()
