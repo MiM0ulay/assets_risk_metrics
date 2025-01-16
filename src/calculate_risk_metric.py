@@ -14,7 +14,7 @@ def calculate_btc_risk_metric():
     df = load_btc_datas()
     # Add your risk metric calculation logic here
     # get data thats not in the quandl database
-    new_data = yf.download(tickers='BTC-USD', start='2024-01-01', interval='1d', progress=False)
+    new_data = yf.download(tickers='BTC-USD', start='2024-01-01', interval='1d', progress=True)
     new_data.reset_index(inplace=True)
     # restructure yf dataframe to match the quandl one
     new_data.rename(columns={'Date': 'date', 'Open': 'value'}, inplace=True)
@@ -22,7 +22,7 @@ def calculate_btc_risk_metric():
     df = pd.concat([df, new_data], ignore_index=True)
     df.drop_duplicates(subset='date', keep='first', inplace=True)
     df.sort_values(by='date', inplace=True)
-    btcdata = yf.download(tickers='BTC-USD', period='1d', interval='1m', progress=False)
+    btcdata = yf.download(tickers='BTC-USD', period='1d', interval='1m', progress=True)
     btcdata.reset_index(inplace=True)
     df = df.dropna(subset=['value'])
     df = df[['date', 'value']]
@@ -43,7 +43,7 @@ def calculate_risk_metric(ticker, start_date):
   last_date = old_data['date'].iloc[-1] 
   formatted_date = last_date.strftime("%Y-%m-%d")
 
-  df = yf.download(tickers=ticker, start=formatted_date, interval='1d', progress=False)
+  df = yf.download(tickers=ticker, start=formatted_date, interval='1d', progress=True)
   df.reset_index(inplace=True)
   df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
   if 'Open' in df.columns:
